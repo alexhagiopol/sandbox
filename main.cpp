@@ -31,7 +31,7 @@ void processSingleThread(const std::vector<double>& myVector) {
         runningSum += computeSquareRootSum(myVector[vecIndex]);
     }
     const auto end = std::chrono::steady_clock::now();
-    std::chrono::duration<double> elapsedSeconds = end-start;
+    const std::chrono::duration<double> elapsedSeconds = end-start;
     std::cout << "Completed single threaded ops in " << elapsedSeconds.count() << "s." << std::endl;
     std::cout << "Sum = " << runningSum << std::endl;
 }
