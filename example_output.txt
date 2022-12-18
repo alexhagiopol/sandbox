@@ -1,0 +1,6 @@
+Starting single threaded ops.
+Completed single threaded ops in 38.5117s.
+Sum = 126687022665
+Starting multi threaded ops.
+Completed multi threaded ops in 9.83882s. 
+Sum = 126687022665
