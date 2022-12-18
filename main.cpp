@@ -9,10 +9,12 @@ static constexpr int kDimension = 6000000;
 static constexpr int kNumIterations = 1000;
 static constexpr int kRandRange = 100;
 
-double randDouble() {
+/// Generate a random double. 
+double computeRandDouble() {
     return static_cast<double>(std::rand() % kRandRange);
 }
 
+/// Do busywork math. Compute a sum of many square roots. 
 double computeSquareRootSum(double initSum) {
     for (int i = 0; i < kNumIterations; i++) { 
         initSum += std::sqrt(static_cast<double>(i));
@@ -20,7 +22,8 @@ double computeSquareRootSum(double initSum) {
     return initSum;
 } 
 
-void singleThread(const std::vector<double>& myVector) {
+/// Call computeSquareRootSum() once for each cell in a vector sequentially. 
+void processSingleThread(const std::vector<double>& myVector) {
     long long runningSum = 0;
     std::cout << "Starting single threaded ops." << std::endl;
     const auto start = std::chrono::steady_clock::now();
@@ -33,6 +36,7 @@ void singleThread(const std::vector<double>& myVector) {
     std::cout << "Sum = " << runningSum << std::endl;
 }
 
+/// Call computeSquareRootSum() once for each cell in a vector sequentially with specifiable start and end.
 long long workerFunction(const std::vector<double>& myVector, int start, int end) {
     long long runningSum = 0;
     for (int vecIndex = start; vecIndex < end; vecIndex++) {
@@ -41,9 +45,11 @@ long long workerFunction(const std::vector<double>& myVector, int start, int end
     return runningSum;
 }
 
-void multiThread(const std::vector<double>& myVector) {
+/// Call computeSquareRootSum() once for each cell in a vector using async calls.
+void processMultiThread(const std::vector<double>& myVector) {
     std::cout << "Starting multi threaded ops." << std::endl;
     const auto start = std::chrono::steady_clock::now();
+    // f0 ... f3 are std::futures
     auto f0 = std::async(workerFunction, myVector, 0, myVector.size() / 4);
     auto f1 = std::async(workerFunction, myVector, myVector.size() / 4, 2*myVector.size() / 4);
     auto f2 = std::async(workerFunction, myVector, 2*myVector.size() / 4, 3*myVector.size() / 4);
@@ -58,9 +64,9 @@ void multiThread(const std::vector<double>& myVector) {
 int main() {
     std::vector<double> myVector(kDimension,  0.0f);
     for (int i = 0; i < kDimension; i++) {
-        myVector[i] = randDouble();
+        myVector[i] = computeRandDouble();
     }
-    singleThread(myVector);
-    multiThread(myVector);
+    processSingleThread(myVector);
+    processMultiThread(myVector);
     return 0;
 }
